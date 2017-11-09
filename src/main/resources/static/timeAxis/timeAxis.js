@@ -67,9 +67,10 @@ define(["jquery", "vue", "moment", "text!timeAxisHtml", "rangeSlider", "daterang
         return this;
     }
 
-    function autoUpdate() {
+    function autoUpdate(time) {
+        time=time||"30s";
         vueData.hasAutoUpdate = true;
-        $('body').everyTime('2s', function () {
+        $('body').everyTime(time, function () {
             var bucketMoment = _calCurrentTimeBucket();
             vueData.timeBucket = bucketMoment.format("YYYYMMDDHHmmss");
             console.log("auto update, end time: " + vueData.timeBucket);
