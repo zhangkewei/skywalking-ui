@@ -20,9 +20,16 @@ package org.skywalking.apm.ui.controller;
 
 import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
+
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.skywalking.apm.ui.service.HealthService;
+import org.skywalking.apm.ui.swgger.ApplicationResponse;
+import org.skywalking.apm.ui.swgger.InstancesResponse;
 import org.skywalking.apm.ui.web.ControllerBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,10 +47,13 @@ public class HealthController extends ControllerBase {
 
     @Autowired
     private HealthService service;
-
+    @ApiOperation(value = "查询应用实例列表",notes="返回指定时间某个应用的实例列表",httpMethod = "GET",produces="application/json")
+    @ApiResponses({
+            @ApiResponse(code=200, message = "",response = InstancesResponse.class)
+    })
     @GetMapping("/health/instances")
-    public void loadInstanceHealth(@ModelAttribute("timeBucket") long timeBucket,
-        @RequestParam(value = "applicationIds[]", required = false) String[] applicationIds,
+    public void loadInstanceHealth(@ApiParam(value="时间,yyyyMMddHHmmss",required = true) @ModelAttribute("timeBucket") long timeBucket,
+                                   @ApiParam(value="应用ID") @RequestParam(value = "applicationIds[]", required = false) String[] applicationIds,
         HttpServletResponse response) throws IOException {
 
         logger.info("load Instance Health, timeBucket: %d, applicationIds: %s", timeBucket, applicationIds);

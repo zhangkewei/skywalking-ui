@@ -19,10 +19,14 @@
 package org.skywalking.apm.ui.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.servlet.http.HttpServletResponse;
+
+import io.swagger.annotations.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.skywalking.apm.ui.service.ApplicationService;
+import org.skywalking.apm.ui.swgger.ApplicationResponse;
 import org.skywalking.apm.ui.web.ControllerBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,9 +44,14 @@ public class ApplicationController extends ControllerBase {
     @Autowired
     private ApplicationService service;
 
+    @ApiOperation(value = "查询应用列表", notes="返回指定时间段内注册到APM的应用列表", httpMethod = "GET", produces = "application/json")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "", response = ApplicationResponse.class, responseContainer = "List")
+    })
     @GetMapping("/applications")
-    public void load(@ModelAttribute("timeBucketType") String timeBucketType,
-        @ModelAttribute("startTime") long startTime, @ModelAttribute("endTime") long endTime,
+    public void load(@ApiParam(value = "时间类型", required = true, allowableValues = "second") @ModelAttribute("timeBucketType") String timeBucketType,
+                     @ApiParam(value = "开始时间", required = true, example = "20171113133129") @ModelAttribute("startTime") long startTime,
+                     @ApiParam(value = "结束时间", required = true, example = "20171113133429") @ModelAttribute("endTime") long endTime,
         HttpServletResponse response) throws IOException {
 
         logger.info("load applications, timeBucketType: %s, startTime: %s, endTime: %s", timeBucketType, startTime, endTime);

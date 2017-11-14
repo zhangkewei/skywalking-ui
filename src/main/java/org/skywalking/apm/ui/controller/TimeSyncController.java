@@ -21,9 +21,15 @@ package org.skywalking.apm.ui.controller;
 import com.google.gson.JsonObject;
 import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
+
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.skywalking.apm.ui.service.TimeSyncService;
+import org.skywalking.apm.ui.swgger.ServiceTreeResponse;
 import org.skywalking.apm.ui.web.ControllerBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,6 +47,10 @@ public class TimeSyncController extends ControllerBase {
     @Autowired
     private TimeSyncService service;
 
+    @ApiOperation(value = "应用实例最后心跳时间", notes = "应用实例最后心跳时间", httpMethod = "GET",produces = "application/json")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "",response = Long.class)
+    })
     @GetMapping("time/sync/allInstance")
     public void allInstance(HttpServletResponse response) throws IOException {
         logger.debug("load all instance last time");
@@ -50,8 +60,13 @@ public class TimeSyncController extends ControllerBase {
         reply(result.toString(), response);
     }
 
+    @ApiOperation(value = "某应用实例最后心跳时间", notes = "根据instanceId获得指定应用实例最后心跳时间", httpMethod = "GET",produces = "application/json")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "", response = Long.class)
+    })
     @GetMapping("time/sync/oneInstance")
-    public void oneInstance(@ModelAttribute("instanceId") int instanceId,
+    public void oneInstance(
+        @ApiParam(value = "应用实例", required = true) @ModelAttribute("instanceId") int instanceId,
         HttpServletResponse response) throws IOException {
         logger.debug("load one instance last time, instance id: %s", instanceId);
         long timeBucket = service.oneInstance(instanceId);
