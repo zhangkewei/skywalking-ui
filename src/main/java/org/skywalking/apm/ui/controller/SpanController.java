@@ -22,9 +22,15 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.skywalking.apm.ui.service.SpanService;
+import org.skywalking.apm.ui.swgger.InstanceInfoResponse;
+import org.skywalking.apm.ui.swgger.SpanInfo;
 import org.skywalking.apm.ui.web.ControllerBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,9 +49,13 @@ public class SpanController extends ControllerBase {
 
     @Autowired
     private SpanService service;
-
+    @ApiOperation(value = "查询调用链片段信息", notes = "根据调用链片段ID查询该片段信息", httpMethod = "GET", produces = "application/json")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "", response = SpanInfo.class)
+    })
     @GetMapping("spanDataLoad")
-    public void spanDataLoad(@ModelAttribute("spanSegId") String spanSegId, HttpServletResponse response) throws IOException {
+    public void spanDataLoad(
+            @ApiParam(value = "调用链片段ID", required = true) @ModelAttribute("spanSegId") String spanSegId, HttpServletResponse response) throws IOException {
         logger.debug("costDataLoad spanSegId = %s", spanSegId);
         JsonObject dagJson = service.loadData(spanSegId);
         reply(dagJson.toString(), response);

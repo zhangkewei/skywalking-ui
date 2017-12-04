@@ -20,9 +20,17 @@ package org.skywalking.apm.ui.controller;
 
 import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
+
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.skywalking.apm.ui.service.InstanceMetricService;
+import org.skywalking.apm.ui.swgger.ApplicationResponse;
+import org.skywalking.apm.ui.swgger.InstanceInfoResponse;
+import org.skywalking.apm.ui.swgger.InstanceMetricResponse;
 import org.skywalking.apm.ui.web.ControllerBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,24 +46,27 @@ public class InstanceMetricController extends ControllerBase {
     @Autowired
     private InstanceMetricService service;
 
+    @ApiOperation(value = "查询实例硬件信息", notes = "返回指定实例的硬件信息", httpMethod = "GET", produces = "application/json")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "", response = InstanceInfoResponse.class)
+    })
     @RequestMapping("/instanceInfo")
-    public void instanceInfo(@RequestParam("instanceId") int instanceId,
+    public void instanceInfo(@ApiParam(value = "实例ID" , required = true) @RequestParam("instanceId") int instanceId,
         HttpServletResponse response) throws IOException {
         logger.info("load instance info : %d", instanceId);
-//        JsonObject result = new Gson().fromJson("{\"osName\":\"Linux\",\"hostName\":\"ascrutae\",\"processId\":3753,\"ipv4s\":[\"192.168.0.1\",\"10.0.0.1\",\"223.56.23.64\"]}", JsonObject.class);
         reply(service.getOsInfo(instanceId).toString(), response);
     }
-
+    @ApiOperation(value = "查询实例JVM指标", notes = "返回指定实例的JVM性能指标", httpMethod = "GET", produces = "application/json")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "", response = InstanceMetricResponse.class)
+    })
     @RequestMapping("/metricInfoWithTimeRange")
-    public void metricInfoWithTimeRange(@RequestParam("instanceId") int instanceId,
-        @RequestParam("metricNames[]") String[] metricNames,
-        @RequestParam("startTime") long startTime,
-        @RequestParam("endTime") long endTime,
+    public void metricInfoWithTimeRange(@ApiParam(value = "实例ID" ,required = true) @RequestParam("instanceId") int instanceId,
+        @ApiParam(value = "查询类型",required = true, allowMultiple = true, allowableValues = "tps,cpu,resptime,heapMemory,gc,nonHeapMemory,permGen,metaSpace,newGen,oldGen,survivor") @RequestParam("metricNames[]") String[] metricNames,
+        @ApiParam(value = "开始时间,yyyyMMddHHmmss", required = true) @RequestParam("startTime") long startTime,
+        @ApiParam(value = "结束时间,yyyyMMddHHmmss", required = true) @RequestParam("endTime") long endTime,
         HttpServletResponse response) throws IOException {
         logger.info("load metric Info: %d, %d, %d, %s", instanceId, startTime, endTime, metricNames);
-
-//        JsonObject result;
-//        result = new Gson().fromJson("{\"cpu\":[{\"timeBucket\":20170827092223,\"data\":25},{\"timeBucket\":20170827092224,\"data\":25},{\"timeBucket\":20170827092226,\"data\":25},{\"timeBucket\":20170827092227,\"data\":25}],\"heapMemory\":[{\"timeBucket\":20170827092223,\"data\":{\"init\":1024,\"max\":2048,\"used\":1906}},{\"timeBucket\":20170827092224,\"data\":{\"init\":1024,\"max\":2048,\"used\":1503}},{\"timeBucket\":20170827092226,\"data\":{\"init\":1024,\"max\":2048,\"used\":1708}},{\"timeBucket\":20170827092227,\"data\":{\"init\":1024,\"max\":2048,\"used\":1046}}],\"respTime\":[{\"timeBucket\":20170827092223,\"data\":350},{\"timeBucket\":20170827092224,\"data\":550},{\"timeBucket\":20170827092226,\"data\":600},{\"timeBucket\":20170827092227,\"data\":570}],\"tps\":[{\"timeBucket\":20170827092223,\"data\":200},{\"timeBucket\":20170827092224,\"data\":210},{\"timeBucket\":20170827092226,\"data\":220},{\"timeBucket\":20170827092227,\"data\":219}],\"gc\":[{\"timeBucket\":20170827092223,\"data\":{\"ygc\":1,\"ogc\":0}},{\"timeBucket\":20170827092224,\"data\":{\"ygc\":2,\"ogc\":1}},{\"timeBucket\":20170827092226,\"data\":{\"ygc\":0,\"ogc\":0}},{\"timeBucket\":20170827092227,\"data\":{\"ygc\":3,\"ogc\":2}}]}", JsonObject.class);
         reply(service.getMetric(instanceId, metricNames, startTime, endTime).toString(), response);
     }
 }
