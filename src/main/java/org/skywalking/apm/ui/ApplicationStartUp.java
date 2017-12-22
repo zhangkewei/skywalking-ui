@@ -21,9 +21,12 @@ package org.skywalking.apm.ui;
 import org.skywalking.apm.ui.tools.CollectorUIServerGetterTimer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.ApplicationContext;
 
+
+@ServletComponentScan
 @SpringBootApplication
 public class ApplicationStartUp extends SpringBootServletInitializer {
 

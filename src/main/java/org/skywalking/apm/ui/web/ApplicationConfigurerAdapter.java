@@ -19,6 +19,7 @@
 package org.skywalking.apm.ui.web;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
@@ -52,11 +53,10 @@ public class ApplicationConfigurerAdapter extends WebMvcConfigurerAdapter {
         viewResolver.setSuffix(".html");
         registry.viewResolver(viewResolver);
     }
-
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-//		registry.addViewController("/index").setViewName("forward:/index.html");
-//		registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
-//		super.addViewControllers(registry);
+		registry.addViewController("/index.html").setViewName("redirect:http://172.16.136.37");
+		registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
+		super.addViewControllers(registry);
     }
 }

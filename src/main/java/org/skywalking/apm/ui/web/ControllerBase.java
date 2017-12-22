@@ -18,11 +18,14 @@
 
 package org.skywalking.apm.ui.web;
 
+import org.springframework.web.bind.annotation.RequestMapping;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletResponse;
 
+@RequestMapping("/api")
 public abstract class ControllerBase {
     private static final String CONTENT_TYPE = "application/json; charset=UTF-8";
     private static final String UTF_8 = "UTF-8";
