@@ -84,7 +84,7 @@ public class TopTraceListService {
             JsonObject data = dataArray.get(i).getAsJsonObject();
             long start = data.get("start_time").getAsLong();
             String startStr = TimeBucketTools.format(start);
-            String traceIds = data.get("global_trace_id").getAsString();
+            String traceIds = data.has("global_trace_id") ? data.get("global_trace_id").getAsString() : "";
             data.addProperty("DT_RowId", traceIds);
             data.addProperty("start_time", startStr);
 
